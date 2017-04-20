@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MobileSchoolTranslater</string>
+    <string name="search_in_bookmarks">Введите слово</string>
+</resources>

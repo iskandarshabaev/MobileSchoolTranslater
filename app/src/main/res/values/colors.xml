@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryDark">#004D40</color>
+    <color name="colorAccent">#FF5722</color>
+
+    <color name="colorPrimaryText">#DD000000</color>
+    <color name="colorSecondaryText">#89000000</color>
+    <color name="colorHintText">#60000000</color>
+    <color name="colorDividers">#1E000000</color>
+    <color name="colorPrimaryTextInverted">#FFFFFFFF</color>
+    <color name="colorSecondaryTextInverted">#B2FFFFFF</color>
+    <color name="colorHintTextInverted">#7FFFFFFF</color>
+    <color name="colorDividersInverted">#1EFFFFFF</color>
+    <color name="colorPrimaryButtonText">#FFFFFFFF</color>
+</resources>

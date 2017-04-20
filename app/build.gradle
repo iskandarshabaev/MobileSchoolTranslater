@@ -1,0 +1,50 @@
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'org.greenrobot.greendao'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.ishabaev.mobileschooltranslater"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "API_ENDPOINT", '"https://translate.yandex.net/api/v1.5/tr.json/"'
+        buildConfigField "String", "API_VERSION", '"v1.5"'
+        buildConfigField "String", "API_FORMAT", '"tr.json"'
+        buildConfigField "String", "API_KEY", '"trnsl.1.1.20170318T170638Z.6102b0f539b7aa71.15fe198c9e27c004212ec23f71edd79bbd3c45b6"'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
+    compile "com.android.support:cardview-v7:25.1.0"
+    compile "io.reactivex:rxjava:1.1.10"
+    compile "io.reactivex:rxandroid:1.2.1"
+    compile "com.squareup.retrofit2:retrofit:2.1.0"
+    compile "com.squareup.retrofit2:converter-gson:2.1.0"
+    compile "com.squareup.retrofit2:adapter-rxjava:2.1.0"
+    compile "com.squareup.okhttp3:logging-interceptor:3.4.1"
+    compile 'org.greenrobot:greendao:3.2.0'
+
+    testCompile 'junit:junit:4.12'
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+}
