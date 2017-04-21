@@ -16,7 +16,8 @@ public class App extends Application {
         DataSourceProvider.provideCommon(this);
         /*for (int i = 0; i < 3000; i++) {
             DataSourceProvider.provideCache(this)
-                    .saveTranslation("текст" + i, "text" + i, "ru-en");
+                    .saveTranslation("текст" + i, "text" + i, "ru-en")
+                    .subscribe();
         }*/
     }
 }

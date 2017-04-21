@@ -39,9 +39,16 @@ public class BookmarksPresenter extends BasePresenter {
     }
 
     public void searchBookmark(@NonNull String text) {
-        mCacheDataSource.searchTranslation(text)
+        mOffset = 0;
+        mCacheDataSource.searchBookmark(text, CHUNK, mOffset)
                 .compose(RxSchedulers.async())
                 .subscribe(mView::showBookmarks, this::showError);
+    }
+
+    public void loadBookmarks(@NonNull String text) {
+        mCacheDataSource.searchBookmark(text, CHUNK, mOffset)
+                .compose(RxSchedulers.async())
+                .subscribe(mView::addBookmarks, this::showError);
     }
 
     private void showError(Throwable throwable) {

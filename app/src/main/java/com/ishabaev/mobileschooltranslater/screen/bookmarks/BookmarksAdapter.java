@@ -36,7 +36,7 @@ public class BookmarksAdapter extends RecyclerView.Adapter<BookmarksViewHolder> 
 
     public void removeItem(@NonNull Translation translation) {
         int index = mTranslations.indexOf(translation);
-        if (index > 0) {
+        if (index >= 0) {
             mTranslations.remove(translation);
             notifyItemRangeRemoved(index, 1);
         }

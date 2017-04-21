@@ -1,14 +1,19 @@
 package com.ishabaev.mobileschooltranslater.screen.translate;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +26,7 @@ import com.ishabaev.mobileschooltranslater.datasource.CommonDataSource;
 import com.ishabaev.mobileschooltranslater.datasource.DataSourceProvider;
 import com.ishabaev.mobileschooltranslater.datasource.TranslateDataSource;
 import com.ishabaev.mobileschooltranslater.datasource.Translation;
-import com.ishabaev.mobileschooltranslater.screen.EndlessScrollListener;
+import com.ishabaev.mobileschooltranslater.screen.Animations;
 import com.ishabaev.mobileschooltranslater.screen.Navigator;
 import com.ishabaev.mobileschooltranslater.screen.bookmarks.BookmarksAdapter;
 import com.ishabaev.mobileschooltranslater.screen.langs.LangsActivity;
@@ -50,6 +55,8 @@ public class TranslateFragment extends Fragment implements TranslateView, View.O
     private RecyclerView mHistoryRecyclerView;
     private BookmarksAdapter adapter;
     private NestedScrollView mNestedScrollView;
+    private CardView mTranslationCard;
+    private CardView mHistoryCard;
 
     public static Fragment newInstance() {
         return newInstance(null);
@@ -72,7 +79,16 @@ public class TranslateFragment extends Fragment implements TranslateView, View.O
         initPresenter();
         findViews(rootView);
         initViews();
+        mTranslationCard.setY(-mTranslationCard.getHeight() -
+                getResources().getDimensionPixelSize(R.dimen.margin_medium));
+        mTranslationCard.setVisibility(View.GONE);
         mPresenter.loadLangs(Locale.getDefault().getLanguage());
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         Bundle args = getArguments();
         if (args != null) {
             long id = args.getLong(TRANSLATION_ID, -1);
@@ -80,12 +96,6 @@ public class TranslateFragment extends Fragment implements TranslateView, View.O
                 mPresenter.loadTranslation(id);
             }
         }
-        return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     private void initPresenter() {
@@ -108,7 +118,9 @@ public class TranslateFragment extends Fragment implements TranslateView, View.O
         mTranslatedSpeechTextView = (TextView) rootView.findViewById(R.id.speech_translated);
         mFavoritesButton = (ImageView) rootView.findViewById(R.id.bookmark);
         mHistoryRecyclerView = (RecyclerView) rootView.findViewById(R.id.history);
-        mNestedScrollView = (NestedScrollView)rootView.findViewById(R.id.nested_scroll);
+        mNestedScrollView = (NestedScrollView) rootView.findViewById(R.id.nested_scroll);
+        mTranslationCard = (CardView) rootView.findViewById(R.id.translation_card);
+        mHistoryCard = (CardView) rootView.findViewById(R.id.history_card);
     }
 
     private void initViews() {
@@ -145,7 +157,7 @@ public class TranslateFragment extends Fragment implements TranslateView, View.O
         mHistoryRecyclerView.setNestedScrollingEnabled(false);
         mHistoryRecyclerView.setHasFixedSize(false);
         mNestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-            if(v.getChildAt(v.getChildCount() - 1) != null) {
+            if (v.getChildAt(v.getChildCount() - 1) != null) {
                 if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
                         scrollY > oldScrollY) {
                     mPresenter.loadHistory();
@@ -166,6 +178,13 @@ public class TranslateFragment extends Fragment implements TranslateView, View.O
             case R.id.clear:
                 mText.setText("");
                 mTranslationTextView.setText("");
+                ObjectAnimator hide = Animations.makeHide(mTranslationCard, -mTranslationCard.getHeight() -
+                        getResources().getDimensionPixelSize(R.dimen.margin_medium));
+                ObjectAnimator show = Animations.makeShow(mHistoryCard, 0);
+                show.addUpdateListener(valueAnimator -> mNestedScrollView.scrollTo(0, 0));
+                AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.playSequentially(hide, show);
+                animatorSet.start();
                 break;
             case R.id.swap:
                 changeLanguage();
@@ -214,6 +233,15 @@ public class TranslateFragment extends Fragment implements TranslateView, View.O
     @Override
     public void showTranslation(@NonNull String text) {
         mTranslationTextView.setText(text);
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int height = size.y;
+        ObjectAnimator show = Animations.makeShow(mTranslationCard, 0);
+        ObjectAnimator hide = Animations.makeHide(mHistoryCard, height);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playSequentially(hide, show);
+        animatorSet.start();
     }
 
     @Override

@@ -25,10 +25,12 @@ import java.util.List;
 public class BookmarksFragment extends Fragment implements BookmarksView {
 
     public static String TAG = "bookmarks_fragment";
+    int pastVisibleItems, visibleItemCount, totalItemCount;
     private RxEditText mSearchEditText;
     private RecyclerView mBookmarksRecyclerView;
     private BookmarksAdapter mAdapter;
     private BookmarksPresenter mPresenter;
+    private boolean loading = true;
 
     public static Fragment newInstance() {
         return new BookmarksFragment();
@@ -70,6 +72,24 @@ public class BookmarksFragment extends Fragment implements BookmarksView {
         mBookmarksRecyclerView.setAdapter(mAdapter);
 
         mSearchEditText.setOnRxTextChangeListener(text -> mPresenter.searchBookmark(text), 500);
+
+        mBookmarksRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    visibleItemCount = layoutManager.getChildCount();
+                    totalItemCount = layoutManager.getItemCount();
+                    pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
+                    if (loading) {
+                        if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                            loading = false;
+                            mPresenter.loadBookmarks(mSearchEditText.getText().toString());
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void initPresenter() {

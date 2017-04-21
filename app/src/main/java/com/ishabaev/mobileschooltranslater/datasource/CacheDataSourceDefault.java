@@ -36,6 +36,40 @@ public class CacheDataSourceDefault implements CacheDataSource {
                 .list();
     }
 
+    private List<Translation> searchTranslationByText(String text, int limit, int offset) {
+        String search = "%" + text + "%";
+        QueryBuilder<Translation> builder = mDaoSession.getTranslationDao().queryBuilder();
+        return builder.where(builder.or(TranslationDao.Properties.Text.like(search),
+                TranslationDao.Properties.Translation.like(search)))
+                .orderDesc(TranslationDao.Properties.Date)
+                .limit(limit)
+                .offset(offset)
+                .list();
+    }
+
+    private List<Translation> searchBookmarkByText(String text, int limit, int offset) {
+        String search = "%" + text + "%";
+        QueryBuilder<Translation> builder = mDaoSession.getTranslationDao().queryBuilder();
+        return builder.where(
+                builder.and(TranslationDao.Properties.Bookmark.eq(true),
+                        builder.or(TranslationDao.Properties.Text.like(search),
+                                TranslationDao.Properties.Translation.like(search))))
+                .orderDesc(TranslationDao.Properties.Date)
+                .limit(limit)
+                .offset(offset)
+                .list();
+    }
+
+    @Override
+    public Observable<List<Translation>> searchBookmark(String text, int limit, int offset) {
+        return Observable.fromCallable(() -> searchBookmarkByText(text, limit, offset));
+    }
+
+    @Override
+    public Observable<List<Translation>> searchTranslation(String text, int limit, int offset) {
+        return Observable.fromCallable(() -> searchTranslationByText(text, limit, offset));
+    }
+
     @Override
     public Observable<List<Translation>> getAll(int limit, int offset) {
         return Observable.fromCallable(() -> mDaoSession.getTranslationDao()

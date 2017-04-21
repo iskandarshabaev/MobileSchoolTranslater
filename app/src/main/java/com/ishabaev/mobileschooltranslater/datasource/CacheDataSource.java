@@ -24,4 +24,7 @@ public interface CacheDataSource {
 
     Observable<List<Translation>> searchTranslation(String text);
 
+    Observable<List<Translation>> searchTranslation(String text, int limit, int offset);
+
+    Observable<List<Translation>> searchBookmark(String text, int limit, int offset);
 }
