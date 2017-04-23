@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
     private void initViews() {
         mTabs.addTab(mTabs.newTab().setText("Перевод"));
         mTabs.addTab(mTabs.newTab().setText("Закладки"));
-        mTabs.addTab(mTabs.newTab().setText("Настройки"));
         mTabs.addOnTabSelectedListener(this);
     }
 
